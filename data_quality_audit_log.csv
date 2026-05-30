@@ -1,0 +1,31 @@
+column,issue,n_affected,action
+<all columns>,exact duplicate rows,50,dropped (kept first)
+gender,inconsistent encoding,1409,"standardized to ['Female', 'Male', 'Other']"
+internet_service,inconsistent encoding,804,"standardized to ['DSL', 'Fiber optic', 'No']"
+phone_service,inconsistent encoding,1269,"standardized to ['No', 'Yes']"
+payment_method,inconsistent encoding,758,"standardized to ['Bank transfer', 'Credit card', 'Electronic check', 'Mailed check']"
+age,impossible (out of domain),19,"-> NaN (domain [18,100])"
+age,sentinel placeholder,1,-> NaN (values [999])
+tenure_months,impossible (out of domain),4,"-> NaN (domain [0,120])"
+tenure_months,sentinel placeholder,1,-> NaN (values [500])
+monthly_charges,impossible (out of domain),6,"-> NaN (domain [0,500])"
+monthly_charges,sentinel placeholder,2,-> NaN (values [9999])
+total_charges,impossible (out of domain),2,"-> NaN (domain [0,100000])"
+avg_monthly_gb_used,impossible (out of domain),10,"-> NaN (domain [0,None])"
+num_support_tickets,impossible (out of domain),7,"-> NaN (domain [0,100])"
+num_support_tickets,sentinel placeholder,3,-> NaN (values [500])
+satisfaction_score,impossible (out of domain),136,"-> NaN (domain [0,10])"
+satisfaction_score,sentinel placeholder,4,-> NaN (values [99])
+age,sentinel placeholder,260,age==18.00 spike -> NaN (default/floor)
+total_charges,semantic outlier (vs monthly*tenure),184,"-> NaN (ratio outside [0.3, 3])"
+age,missing value,290,imputed with median
+tenure_months,missing value,15,imputed with median
+monthly_charges,missing value,20,imputed with median
+total_charges,missing value,208,imputed with median
+avg_monthly_gb_used,missing value,25,imputed with median
+num_support_tickets,missing value,10,imputed with median
+avg_monthly_minutes,missing value,80,imputed with median
+satisfaction_score,missing value,160,imputed with median
+gender,missing value,50,imputed with 'Unknown' category
+internet_service,missing value,497,imputed with 'Unknown' category
+payment_method,missing value,30,imputed with 'Unknown' category
