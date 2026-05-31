@@ -99,11 +99,12 @@ Run on `df_clean` (NaNs preserved) so no imputed values distort relationships.
 
 
 
-Model comparison (test set):
-                     best_cv_roc_auc  precision  recall   f1  roc_auc
-model                                                                
-Logistic Regression             0.70       0.51    0.71 0.59     0.72
-XGBoost                         0.69       0.61    0.32 0.42     0.71
+### Model comparison (test set)
+
+| Model               | best_cv_roc_auc | precision | recall | f1   | roc_auc |
+|---------------------|-----------------|-----------|--------|------|---------|
+| Logistic Regression | 0.70            | 0.51      | 0.71   | 0.59 | 0.72    |
+| XGBoost             | 0.69            | 0.61      | 0.32   | 0.42 | 0.71    |
 
 **Which single metric matters most → Recall**, from asymmetric business cost:
 a **false negative** (missed churner) forfeits a customer's entire remaining
