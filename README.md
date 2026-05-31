@@ -88,37 +88,52 @@ Run on `df_clean` (NaNs preserved) so no imputed values distort relationships.
 
 ## Part 3 · Predictive Modeling
 
-| Choice | What | **Why** |
+| Choice | What | Why |
 |---|---|---|
-| **Two models** | Logistic Regression (linear) + XGBoost (tree-based) | Linear gives a calibrated, interpretable baseline; trees can capture the non-linearities/interactions EDA hinted at |
-| **Imbalance handling** | **Class weights**, not SMOTE (`class_weight="balanced"`; `scale_pos_weight`) | Churn is only mildly imbalanced (36.5%); class weighting fabricates no rows on a dataset we just cleaned of fake values, and avoids SMOTE's fit-inside-CV leakage hazard. (`imbalanced-learn` also isn't installed, reinforcing the choice) |
-| **Leak-free pipeline** | Shared `ColumnTransformer` (median-impute+scale numerics; "Missing"-impute+one-hot categoricals), fit on train only | Guarantees serving-time preprocessing matches training exactly |
+| Two models | Logistic Regression (linear) + XGBoost (tree-based) | Linear gives a calibrated, interpretable baseline; trees can capture the non-linearities and interactions EDA hinted at |
+| Imbalance handling | Class weights, not SMOTE (`class_weight="balanced"`; `scale_pos_weight`) | Churn is only mildly imbalanced (36.5%); class weighting fabricates no rows on a dataset we just cleaned of fake values, and avoids SMOTE's fit-inside-CV leakage hazard |
+| Leak-free pipeline | Shared `ColumnTransformer` (median-impute + scale numerics; `"Missing"`-impute + one-hot categoricals), fit on train only | Guarantees serving-time preprocessing matches training exactly |
 
-**Results (held-out 25% test set):**
+---
 
+### Hyperparameter Tuning
 
+Both models were tuned using **`RandomizedSearchCV`** (40 iterations each) scored on **ROC-AUC**, with **5-fold `StratifiedKFold`** cross-validation to preserve the class ratio in every fold. The entire preprocessing + estimator pipeline is wrapped inside the search so no data leaks across folds.
 
+| Model | Parameters Searched |
+|---|---|
+| Logistic Regression | `C` ∈ {0.001 → 100}, `penalty` ∈ {l1, l2}, `solver = saga` |
+| XGBoost | `n_estimators`, `max_depth`, `learning_rate`, `subsample`, `colsample_bytree`, `scale_pos_weight`, `min_child_weight`, `gamma` |
 
-### Model comparison (test set)
+The best parameter combination is automatically refit on the full training set (`refit=True`) before evaluation on the held-out test set.
 
-| Model               | best_cv_roc_auc | precision | recall | f1   | roc_auc |
-|---------------------|-----------------|-----------|--------|------|---------|
-| Logistic Regression | 0.70            | 0.51      | 0.71   | 0.59 | 0.72    |
-| XGBoost             | 0.69            | 0.61      | 0.32   | 0.42 | 0.71    |
+---
 
-**Which single metric matters most → Recall**, from asymmetric business cost:
-a **false negative** (missed churner) forfeits a customer's entire remaining
-lifetime value plus re-acquisition cost; a **false positive** (loyal customer
-flagged) costs only one retention offer. Precision is a budget guardrail, F1
-wrongly assumes the two errors cost the same, and ROC-AUC is best for *model
-selection / threshold setting*. Recommended workflow: pick the model on ROC-AUC,
-then lower the threshold below 0.50 to push recall to the level the retention
-budget allows.
+### Results (held-out 25% test set)
 
-> **Honest note:** absolute scores are modest (AUC ~0.71) and the linear model
-> edges out XGBoost — consistent with Part 2, where only `contract_type` showed
-> strong association. The data caps achievable lift; richer behavioral/usage-
-> trend features would be the next step.
+| Model | best_cv_roc_auc | precision | recall | f1 | roc_auc |
+|---|---|---|---|---|---|
+| Logistic Regression | 0.70 | 0.51 | 0.71 | 0.59 | 0.72 |
+| XGBoost | 0.69 | 0.61 | 0.32 | 0.42 | 0.71 |
+
+---
+
+### Why Recall is the Primary Metric
+
+A **false negative** (missed churner) forfeits a customer's entire remaining lifetime value plus re-acquisition cost. A **false positive** (loyal customer flagged) costs only one retention offer. Given this asymmetry:
+
+- **Recall** — the metric to maximize
+- **Precision** — a budget guardrail
+- **F1** — avoided; it wrongly assumes both error types cost the same
+- **ROC-AUC** — used for model selection and threshold calibration
+
+**Recommended workflow:** select the model by ROC-AUC, then lower the decision threshold below 0.50 to push recall to the level the retention budget allows.
+
+---
+
+### Honest Assessment
+
+Absolute scores are modest (AUC ≈ 0.71) and the linear model edges out XGBoost — consistent with Part 2, where only `contract_type` showed strong association with churn. The data itself caps achievable lift; richer behavioral and usage-trend features would be the most impactful next step.
 
 ---
 
