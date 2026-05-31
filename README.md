@@ -12,18 +12,7 @@ its measured effect.**
 
 ---
 
-## How to run
 
-```bash
-# Anaconda Python is used because it has pandas/numpy/scipy/sklearn/xgboost/matplotlib
-/Users/fathimab/anaconda3/bin/python build_notebook.py        # (re)generate the notebook
-/Users/fathimab/anaconda3/bin/jupyter nbconvert --to notebook \
-    --execute --inplace telecom_data_quality_audit.ipynb       # run it end-to-end
-```
-
-Or open `telecom_data_quality_audit.ipynb` in Jupyter and **Run All**.
-
----
 
 ## The dataset
 
