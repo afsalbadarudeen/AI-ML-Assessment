@@ -156,7 +156,6 @@ budget allows.
 | File | Contents |
 |---|---|
 | `telecom_data_quality_audit.ipynb` | The full executed notebook (audit → cleaning → EDA → modeling → deployment) |
-| `build_notebook.py` | Generator that reproduces the notebook from scratch |
 | `cleaned_data.csv` | Structurally clean data, `NaN`s preserved (recommended for modeling) |
 | `cleaned_data_imputed.csv` | + median / `"Unknown"` imputation |
 | `cleaned_data_features.csv` | + `support_intensity`, `tenure_group` |
