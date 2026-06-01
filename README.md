@@ -3,8 +3,7 @@
 An end-to-end pipeline that takes a raw, messy telecom customer file
 (`test_datafile.csv`) and turns it into a cleaned dataset, an explained set of
 churn drivers, two trained classifiers, and a deployable scoring function.
-Everything lives in one executed notebook — **`telecom_data_quality_audit.ipynb`** —
-and is regenerable from **`build_notebook.py`**.
+Everything lives in one executed notebook — **`telecom_data_quality_audit.ipynb`** 
 
 The guiding philosophy throughout: **never silently fabricate data, separate
 detection from correction, and document every decision with its reasoning and
